@@ -3,8 +3,6 @@ from django.urls import path
 from . import views
 
 
-# from yatube import posts
-
 app_name = 'posts'
 urlpatterns = [
     path('', views.index, name='index'),

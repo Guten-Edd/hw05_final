@@ -11,6 +11,9 @@ POSTS_PER_PAGE = 10  # Number of posts per page
 
 @cache_page(20, key_prefix='index_page')
 def index(request):
+    '''главная страница,
+    кеш 20 сек
+    '''
     template = 'posts/index.html'
     post_list = Post.objects.all()
     paginator = Paginator(post_list, POSTS_PER_PAGE)
@@ -23,6 +26,7 @@ def index(request):
 
 
 def group_posts(request, slug):
+    '''страница группы'''
     group = get_object_or_404(Group, slug=slug)
     template = 'posts/group_list.html'
     post_list = Post.objects.filter(group=group)
@@ -37,6 +41,7 @@ def group_posts(request, slug):
 
 
 def profile(request, username):
+    '''страница автора'''
     profile = get_object_or_404(User, username=username)
     template = 'posts/profile.html'
     post = Post.objects.filter(author=profile)
@@ -55,7 +60,7 @@ def profile(request, username):
 
 
 def post_detail(request, post_id):
-
+    '''страница поста'''
     post = get_object_or_404(Post, pk=post_id)
     form = CommentForm()
     comments = post.comments.all()
@@ -71,6 +76,7 @@ def post_detail(request, post_id):
 
 @login_required
 def post_create(request):
+    '''Добавить пост'''
     template = 'posts/create_post.html'
     form = PostForm(
         request.POST or None,
@@ -89,6 +95,7 @@ def post_create(request):
 
 @login_required
 def post_edit(request, post_id):
+    '''редактировать пост'''
     post = get_object_or_404(Post, pk=post_id)
     if post.author != request.user:
         return redirect(
@@ -115,6 +122,7 @@ def post_edit(request, post_id):
 
 @login_required
 def add_comment(request, post_id):
+    '''Добавить комментарий'''
     post = get_object_or_404(Post, pk=post_id)
     form = CommentForm(request.POST or None)
     template = 'posts:post_detail'
@@ -128,6 +136,7 @@ def add_comment(request, post_id):
 
 @login_required
 def follow_index(request):
+    '''Просмотр подписок(лента)'''
     post_list = Post.objects.filter(author__following__user=request.user)
     paginator = Paginator(post_list, POSTS_PER_PAGE)
     page_number = request.GET.get("page")
